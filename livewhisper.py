@@ -84,4 +84,6 @@ def main():
         if os.path.exists('dictate.wav'): os.remove('dictate.wav')
 
 if __name__ == '__main__':
+    # import pdb
+    # pdb.set_trace()
     main()  # by Nik
