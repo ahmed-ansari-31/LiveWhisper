@@ -41,7 +41,7 @@ class StreamHandler:
             return
         # A few alternative methods exist for detecting speech.. #indata.max() > Threshold
         #zero_crossing_rate = np.sum(np.abs(np.diff(np.sign(indata)))) / (2 * indata.shape[0]) # threshold 20
-        freq = np.argmax(np.abs(np.fft.rfft(indata[:, 0]))) * SampleRate / frames
+        freq = np.argmax(np.abs(np.fft.rfft(indata[:, 0]))) * SampleRate / frames # frames: 1323, SampleRate: 44100
         if np.sqrt(np.mean(indata**2)) > Threshold and Vocals[0] <= freq <= Vocals[1] and not self.asst.talking:
             print('.', end='', flush=True)
             if self.padding < 1: self.buffer = self.prevblock.copy()
