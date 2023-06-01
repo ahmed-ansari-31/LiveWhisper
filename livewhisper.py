@@ -12,10 +12,10 @@ from scipy.io.wavfile import write
 Model = 'small'     # Whisper model size (tiny, base, small, medium, large)
 English = True      # Use English-only model?
 Translate = False   # Translate non-English to English?
-SampleRate = 16000 #44100  # Stream device recording frequency
+SampleRate = 44100  # Stream device recording frequency
 BlockSize = 30      # Block size in milliseconds
 Threshold = 0.1     # Minimum volume threshold to activate listening
-Vocals = [50, 1000] # Frequency range to detect sounds that could be speech
+Vocals = [20, 1000] # Frequency range to detect sounds that could be speech
 EndBlocks = 40      # Number of blocks to wait before sending to Whisper
 
 class StreamHandler:
@@ -43,20 +43,21 @@ class StreamHandler:
         #zero_crossing_rate = np.sum(np.abs(np.diff(np.sign(indata)))) / (2 * indata.shape[0]) # threshold 20
         import pdb
         freq = np.argmax(np.abs(np.fft.rfft(indata[:, 0]))) * SampleRate / frames
+        # print(indata.shape, freq, SampleRate, frames)
         if np.sqrt(np.mean(indata**2)) > Threshold and Vocals[0] <= freq <= Vocals[1] and not self.asst.talking:
             print('.', end='', flush=True)
             if self.padding < 1: self.buffer = self.prevblock.copy()
             self.buffer = np.concatenate((self.buffer, indata))
             self.padding = EndBlocks
-            print("Writing file... here")
+            # print("Writing file... here")
         else:
             print("Writing file...")
             self.padding -= 1
-            print(self.padding < 1 < self.buffer.shape[0] > SampleRate)
-            print('self.padding', self.padding)
-            print('self.buffer.shape[0]', self.buffer.shape[0])
-            print('SampleRate', SampleRate)
-            pdb.set_trace()
+            # print(self.padding < 1 < self.buffer.shape[0] > SampleRate)
+            # print('self.padding', self.padding)
+            # print('self.buffer.shape[0]', self.buffer.shape[0])
+            # print('SampleRate', SampleRate)
+            # pdb.set_trace()
             if self.padding > 1:
                 self.buffer = np.concatenate((self.buffer, indata))
             elif self.padding < 1 < self.buffer.shape[0] > SampleRate: # if enough silence has passed, write to file.
